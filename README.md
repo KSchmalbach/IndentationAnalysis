@@ -3,4 +3,6 @@ This is a package of functions for making strain rate jump load functions for th
 
 Most of this is well tested. Some portions, particularly those related to spherical indentation ldf generation, are still being tested. If you encounter any errors or issues, please contact me! My goal is to release a bug-free set of code. It's unlikely for that to be the case.
 
-For information on input parameters and how to use the software, please see the Using the Software pdf.
+For information on input parameters and how to use the software, please see the "Using the Software" pdf. 
+
+In theory, much of this code could be adapted for non-Bruker/Hysitron systems. If you are interested in doing so, let me know!
