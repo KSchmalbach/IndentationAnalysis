@@ -1,4 +1,4 @@
-function [hc,H,Ac]=CSMless_SRJ_Fun_10_13_20(ARAdir,Disp,Load,Er)
+function [hc,H,Ac]=PlasErrCorr(ARAdir,Disp,Load,Er)
     arguments
         ARAdir char
         Disp cell

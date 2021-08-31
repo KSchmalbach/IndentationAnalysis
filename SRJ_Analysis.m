@@ -1,4 +1,4 @@
-function [VStar,SRSens,Table]=SRJ_Func_3_31_21(PRMDir,AnMode,Hardness,StorMod,Time,Load,Disp,Options)
+function [VStar,SRSens,Table]=SRJ_Analysis(PRMDir,AnMode,Hardness,StorMod,Time,Load,Disp,Options)
     arguments
         PRMDir char %Directory of .prm file
         AnMode char
@@ -32,11 +32,6 @@ Table=cell(4,1);
 k=1.38e-23; %J/K
 T=Options.Temp; %K
 
-%{
-set(groot, 'DefaultTextInterpreter', 'latex');
-set(groot, 'DefaultAxesTickLabelInterpreter','latex');
-set(groot, 'DefaultLegendInterpreter','latex');
-%}
 set(0,'defaultAxesFontSize',18)
 
 %Various plotting and analysis options
@@ -50,9 +45,6 @@ DistIn=Options.DistIn;
 nfiles=length(Disp);
 
 %Plot all tests
-
-
-%%%%% ANNOTATE ALL THIS
 if ReprodPlot==true
     maxLength=max(cellfun(@(x) length(x),Hardness,'UniformOutput',true));
     avgLength=ceil(mean(cellfun(@(x) length(x),Hardness,'UniformOutput',true)));
@@ -187,10 +179,8 @@ if Binning==true
     end
     clear AvgDisp AvgH AvgTime AvgSR AvgLoad SepDisp SepH SepLoad SepSR SepTime nPoints nData Point nPerBin
 end
+
 %Calculate actual SR from 1/2 Pdot/P
-
-
-%%%%% What about with Hdot/H portion?
 for FileNumber=1:nfiles
     for SegmentNumber=1:SRNum
         SRCalc=zeros(length(SeparatedData{1,1,FileNumber,SegmentNumber}),1);
@@ -205,7 +195,6 @@ end
 clear Point
 
 %Check strain rates
-
 if Options.ExamplePlot ~= 0 && Options.ExamplePlot <= nfiles
     TEST=Options.ExamplePlot;
     figure(1111)
@@ -219,8 +208,6 @@ if Options.ExamplePlot ~= 0 && Options.ExamplePlot <= nfiles
     ax1=gca;
     ax1.YColor='k';
     
-    
-    %%%%%% BAD BOUNDS CRITERIA
     if max(SeparatedData{1,2,TEST,SegmentNumber}(:))<1
         UpperBound=round(2*max(SeparatedData{1,2,TEST,SegmentNumber}(:)),1);
     else
@@ -231,15 +218,11 @@ if Options.ExamplePlot ~= 0 && Options.ExamplePlot <= nfiles
     hold on
     for SegmentNumber=1:SRNum
         plot(SeparatedData{1,1,TEST,SegmentNumber}(:),SeparatedData{1,3,TEST,SegmentNumber}(:),'r.')
-        %plot(SeparatedData{1,1,TEST,SegmentNumber}(:),SeparatedData{1,6,TEST,SegmentNumber}(:),'b.')
     end
     ylabel('Strain rate (s^{-1})')
-    %ylabel('Storage Modulus (GPa)')
     ax2=gca;
     ax2.YColor='r';
     set(gca,'yscale','log')
-    %UpperBound=round(2*max(SeparatedData{1,6,TEST,SegmentNumber}(:)),-1);
-    %ylim([0 UpperBound])
     ylim([1e-4 10])
     xlabel('Displacement (nm)')
 end
@@ -272,8 +255,6 @@ if strcmp(AnMode,'regression')
             Mod=rmmissing(SeparatedData{1,6,FileNumber,SegmentNumber});
             SR=SeparatedData{1,3,FileNumber,SegmentNumber}(1);
             nPoints=length(Disp); %Number of data points in segment
-            %DistIn=[0.4 0.5]; % Cellulose
-            %DistIn=[0.35 0.45 0.6 0.25 0.6 0.6]; %Percentages of data to ignore transients (arbitrary, change to fit)
             In=round(DistIn(SegmentNumber-1)*nPoints); %Index to start regression
             Reg=polyfit(Disp(In:end),H(In:end),1); %Perform linear regression
             RegLine=polyval(Reg,Disp);
@@ -288,15 +269,10 @@ if strcmp(AnMode,'regression')
             end
             ExtrapHard=RegLine(1);  
             ExpHard(SegmentNumber-1,FileNumber)=RegLine(1);
-            %Reg=polyfit(Disp(In:end),Mod(In:end),1);
-            %RegLine=polyval(Reg,Disp);
-            %ExpMod(SegmentNumber-1,FileNumber)=RegLine(2);
             ExpMod(SegmentNumber-1,FileNumber)=mean(Mod(In:end));
             dlnEdH(SegmentNumber-1,FileNumber)=(log(SR)-log(SeparatedData{1,3,FileNumber,SegmentNumber-1}(1)))/(ExtrapHard-mean(SeparatedData{1,2,FileNumber,SegmentNumber-1}(end-PPSeg:end)));
             SRSens(SegmentNumber-1,FileNumber)=(log(ExtrapHard)-log(mean(SeparatedData{1,2,FileNumber,SegmentNumber-1}(end-PPSeg:end))))/(log(SR)-log(SeparatedData{1,3,FileNumber,SegmentNumber-1}(1)));
             Depth(SegmentNumber-1,FileNumber)=Disp(1);
-            
-            %%% IN DOCUMENTATION, NEED TO NOTE THAT C* IS ALWAYS 3 HERE
             VStar(SegmentNumber-1,FileNumber)=3.*sqrt(3).*k.*T.*dlnEdH(SegmentNumber-1,FileNumber)./1e9; %m^3
         end
     end
