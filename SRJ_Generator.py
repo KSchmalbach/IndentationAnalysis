@@ -3,7 +3,7 @@ Load Controlled/Open Loop Strain Rate Jump Load Function Generator by Kevin Schm
 To be used with the Hysitron TI980 Nanoindenter
 
 If used in publications, please cite: _________________________
-Maintained at:
+Maintained at: https://github.com/KSchmalbach/IndentationAnalysis
 
 """
 from math import log, exp, sqrt, pi, floor
