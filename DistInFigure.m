@@ -1,17 +1,10 @@
-function DistIn=DistInFigure(Disp,Hardness,JumpNum)
+function DistIn=DistInFigure(Disp,Hardness,SegNum)
 
-    %Specific to test data set
-    %{
-    load TestUI.mat
-    Hardness=NixGaoHard;
-    Disp=CutDisp;
-    SegNum=1;
-    %}
     set(0,'defaultAxesFontSize',12)
     warning('off','MATLAB:declareGlobalBeforeUse');
     global RegLinePlot
     global DistIn
-    fig=uifigure('Name',strcat("Jump ",string(JumpNum)),'Resize','off');
+    fig=uifigure('Name',strcat("Segment ",string(SegNum)),'Resize','off');
     [lbl,editbox,slider,saveButton]=CreateComponents(fig);
     NewAx=axes(fig,'Position',[0.11 0.22 0.775 0.715]);
     xlabel(NewAx,'Displacement (nm)')

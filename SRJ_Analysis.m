@@ -231,35 +231,39 @@ dlnEdH=zeros(SRNum-1,nfiles);
 SRSens=zeros(SRNum-1,nfiles);
 Depth=zeros(SRNum-1,nfiles);
 VStar=zeros(SRNum-1,nfiles);
-ExpHard=zeros(SRNum-1,nfiles);
-ExpMod=zeros(SRNum-1,nfiles);
+ExpMod=zeros(SRNum,nfiles);
+HardStart=zeros(SRNum,nfiles);
+HardEnd=zeros(SRNum,nfiles);
+
 
 if strcmp(AnMode,'regression')
     %If DistIn values are not provided, open up interactive selection
     if DistIn==0
-        for SegmentNumber=2:SRNum
+        for SegmentNumber=1:SRNum
             for FileNumber=1:nfiles
                 TempH{FileNumber}=SeparatedData{1,2,FileNumber,SegmentNumber};
                 TempDisp{FileNumber}=SeparatedData{1,1,FileNumber,SegmentNumber};
             end
-            DistIn(SegmentNumber-1)=DistInFigure(TempDisp,TempH,SegmentNumber-1);
+            DistIn(SegmentNumber)=DistInFigure_11_4_21(TempDisp,TempH,SegmentNumber);
+            SR(SegmentNumber)=SeparatedData{1,3,1,SegmentNumber}(1);
             SegmentPlot=false;
             Table{4}=DistIn;
         end
     end
+
+    %Reduce to be regression line data (H, disp) start and end
     for FileNumber=1:nfiles
-        for SegmentNumber=2:SRNum
+        for SegmentNumber=1:SRNum
             %Load in one strain rate at a time
             Disp=rmmissing(SeparatedData{1,1,FileNumber,SegmentNumber});
             H=rmmissing(SeparatedData{1,2,FileNumber,SegmentNumber});
             Mod=rmmissing(SeparatedData{1,6,FileNumber,SegmentNumber});
-            SR=SeparatedData{1,3,FileNumber,SegmentNumber}(1);
             nPoints=length(Disp); %Number of data points in segment
-            In=round(DistIn(SegmentNumber-1)*nPoints); %Index to start regression
+            In=round(DistIn(SegmentNumber)*nPoints); %Index to start regression
             Reg=polyfit(Disp(In:end),H(In:end),1); %Perform linear regression
             RegLine=polyval(Reg,Disp);
             if SegmentPlot==true
-                figure(SegmentNumber-1)
+                figure(SegmentNumber)
                 hold on
                 d=plot(Disp,H,'ro');
                 r=plot(Disp,RegLine,'b');
@@ -267,11 +271,19 @@ if strcmp(AnMode,'regression')
                 xlabel('Displacement (nm)')
                 ylabel('Hardness (GPa)')
             end
-            ExtrapHard=RegLine(1);  
-            ExpHard(SegmentNumber-1,FileNumber)=RegLine(1);
-            ExpMod(SegmentNumber-1,FileNumber)=mean(Mod(In:end));
-            dlnEdH(SegmentNumber-1,FileNumber)=(log(SR)-log(SeparatedData{1,3,FileNumber,SegmentNumber-1}(1)))/(ExtrapHard-mean(SeparatedData{1,2,FileNumber,SegmentNumber-1}(end-PPSeg:end)));
-            SRSens(SegmentNumber-1,FileNumber)=(log(ExtrapHard)-log(mean(SeparatedData{1,2,FileNumber,SegmentNumber-1}(end-PPSeg:end))))/(log(SR)-log(SeparatedData{1,3,FileNumber,SegmentNumber-1}(1)));
+            ExpMod(SegmentNumber,FileNumber)=mean(Mod(In:end));
+            HardStart(SegmentNumber,FileNumber)=RegLine(1);
+            HardEnd(SegmentNumber,FileNumber)=RegLine(end);
+            ExpHard=HardEnd;
+        end
+    end
+    for FileNumber=1:nfiles
+        for SegmentNumber=2:SRNum
+            dlogSR=log(SR(SegmentNumber))-log(SR(SegmentNumber-1));
+            dH=HardStart(SegmentNumber,FileNumber)-HardEnd(SegmentNumber-1,FileNumber);
+            dlogH=log(HardStart(SegmentNumber,FileNumber))-log(HardEnd(SegmentNumber-1,FileNumber));
+            dlnEdH(SegmentNumber-1,FileNumber)=dlogSR/dH;
+            SRSens(SegmentNumber-1,FileNumber)=dlogH/dlogSR;
             Depth(SegmentNumber-1,FileNumber)=Disp(1);
             VStar(SegmentNumber-1,FileNumber)=3.*sqrt(3).*k.*T.*dlnEdH(SegmentNumber-1,FileNumber)./1e9; %m^3
         end
@@ -302,4 +314,5 @@ end
 Table{1}=ExpHard;
 Table{2}=ExpMod;
 Table{3}=Strains;
+Table{5}=Depth;
 end
