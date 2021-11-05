@@ -244,7 +244,7 @@ if strcmp(AnMode,'regression')
                 TempH{FileNumber}=SeparatedData{1,2,FileNumber,SegmentNumber};
                 TempDisp{FileNumber}=SeparatedData{1,1,FileNumber,SegmentNumber};
             end
-            DistIn(SegmentNumber)=DistInFigure_11_4_21(TempDisp,TempH,SegmentNumber);
+            DistIn(SegmentNumber)=DistInFigure(TempDisp,TempH,SegmentNumber);
             SR(SegmentNumber)=SeparatedData{1,3,1,SegmentNumber}(1);
             SegmentPlot=false;
             Table{4}=DistIn;
