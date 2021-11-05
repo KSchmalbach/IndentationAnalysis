@@ -275,6 +275,9 @@ if strcmp(AnMode,'regression')
             HardStart(SegmentNumber,FileNumber)=RegLine(1);
             HardEnd(SegmentNumber,FileNumber)=RegLine(end);
             ExpHard=HardEnd;
+            if SegmentNumber>1
+                Depth(SegmentNumber-1,FileNumber)=Disp(1);
+            end
         end
     end
     for FileNumber=1:nfiles
@@ -284,7 +287,7 @@ if strcmp(AnMode,'regression')
             dlogH=log(HardStart(SegmentNumber,FileNumber))-log(HardEnd(SegmentNumber-1,FileNumber));
             dlnEdH(SegmentNumber-1,FileNumber)=dlogSR/dH;
             SRSens(SegmentNumber-1,FileNumber)=dlogH/dlogSR;
-            Depth(SegmentNumber-1,FileNumber)=Disp(1);
+            
             VStar(SegmentNumber-1,FileNumber)=3.*sqrt(3).*k.*T.*dlnEdH(SegmentNumber-1,FileNumber)./1e9; %m^3
         end
     end
