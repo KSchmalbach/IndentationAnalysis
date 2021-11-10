@@ -11,6 +11,7 @@ function DistIn=DistInFigure(Disp,Hardness,SegNum)
     ylabel(NewAx,'Hardness (GPa)')
     hold(NewAx,'on')
     nfiles=length(Hardness);
+    box(NewAx,'on')
     for FileNumber=1:nfiles
         plot(NewAx,Disp{FileNumber},Hardness{FileNumber},'ro');
     end
