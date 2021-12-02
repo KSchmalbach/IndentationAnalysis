@@ -14,6 +14,8 @@ function [hstar,H0]=NixGaoCSM(DataDir,ARAdir)
     RawHardness=cell(nfiles,1);
     RawStiff=cell(nfiles,1);
     RawContactDepth=cell(nfiles,1);
+    RawDispAmp=cell(nfiles,1);
+    RawLoadAmp=cell(nfiles,1);
     for FileNumber=1:nfiles
         currentfile=dlmread(files(FileNumber).name,'\t',3,0);
         ModLoc=size(currentfile,2)-10;
@@ -23,10 +25,12 @@ function [hstar,H0]=NixGaoCSM(DataDir,ARAdir)
         RawHardness{FileNumber}=currentfile(:,ModLoc+2); 
         RawStiff{FileNumber}=currentfile(:,ModLoc+2+3);
         RawContactDepth{FileNumber}=currentfile(:,end);
+        RawDispAmp{FileNumber}=currentfile(:,ModLoc-4);
+        RawLoadAmp{FileNumber}=currentfile(:,ModLoc-2);
     end
     [~, ~, EndTimes, ~, ~]=ReadPRM(DataDir);
-    [ZeroDisp,ZeroLoad,~,ZeroHard]=ZeroHLIndentLoadDisp(RawDisp,RawLoad,RawTime,RawStiff,ARAdir);
-
+    %[ZeroDisp,ZeroLoad,~,ZeroHard]=ZeroHLIndentLoadDisp(RawDisp,RawLoad,RawTime,RawStiff,ARAdir);
+    [ZeroDisp,~,~,ZeroHard]=ManualRezeroLD(RawDisp,RawLoad,RawStiff,RawDispAmp,RawLoadAmp,ARAdir);
     
     ZeroContactDepth=cell(nfiles,1);
     for FileNumber=1:nfiles
