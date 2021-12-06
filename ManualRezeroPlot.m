@@ -15,6 +15,7 @@ function [ZeroDisp,ZeroLoad]=ManualRezeroPlot(Disp,Load,Filenum)
     ylabel(NewAx,'Load (\muN)')
     hold(NewAx,'on')
     plot(NewAx,Disp,Load,'k.')
+    xlim(NewAx,[-50 50])
     saveButton.ButtonPushedFcn=@(but,event) SaveButtonPressed(but,fig,LoadEbox.Value,DispEbox.Value);
     
     
