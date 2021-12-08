@@ -123,18 +123,17 @@ class App(tk.Frame):
             SRPopUp.destroy()
 
         def BoxesFilled():
-            if type(HLorLLSel) != int:
-                HLorLLSel==HLorLLSel.get()
+            HLorLLSelVal=int(HLorLLSel.get())
+            print(FreqBox.get())
             #Check that each parameter has a value
             if AmpBox.get()=='' or SRNumBox.get()=='' or FreqBox.get()=='' \
                 or PPSegBox.get()=='' or FileBox.get()=='' or StrainRates==[] or EndLoads==[]:
                 FillError()
-            elif int(BerkOrSphere.get())==1: #Check for required parameters for spherical
-                if RedModBox.get()=='' or TipRadBox.get()=='':
-                    FillError()
-            elif float(FreqBox.get())>301.5 and HLorLLSel==0: #low load head only goes to 301.5 Hz
+            elif int(BerkOrSphere.get())==1 and (RedModBox.get()=='' or TipRadBox.get()==''): #Check for required parameters for spherical
+                FillError()
+            elif float(FreqBox.get())>301.5 and HLorLLSelVal==0: #low load head only goes to 301.5 Hz
                 FreqError()
-            elif float(FreqBox.get())>101.5 and HLorLLSel==1: #high load head only goes to 101.5 Hz
+            elif float(FreqBox.get())>101.5 and HLorLLSelVal==1: #high load head only goes to 101.5 Hz
                 FreqError()
             else:
                 SegmentCheck(StrainRates,EndLoads,AmpScale,Plotting)
