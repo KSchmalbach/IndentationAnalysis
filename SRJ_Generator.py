@@ -124,7 +124,6 @@ class App(tk.Frame):
 
         def BoxesFilled():
             HLorLLSelVal=int(HLorLLSel.get())
-            print(FreqBox.get())
             #Check that each parameter has a value
             if AmpBox.get()=='' or SRNumBox.get()=='' or FreqBox.get()=='' \
                 or PPSegBox.get()=='' or FileBox.get()=='' or StrainRates==[] or EndLoads==[]:
