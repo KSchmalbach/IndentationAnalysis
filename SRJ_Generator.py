@@ -2,7 +2,8 @@
 Load Controlled/Open Loop Strain Rate Jump Load Function Generator by Kevin Schmalbach
 To be used with the Hysitron TI980 Nanoindenter
 
-If used in publications, please cite: _________________________
+If used in publications, please cite: Schmalbach, K.M., Mara, N.A. 
+Algorithms for Nanoindentation Strain Rate Jump Testing and Analysis. Exp Mech (2022). https://doi.org/10.1007/s11340-022-00833-x
 Maintained at: https://github.com/KSchmalbach/IndentationAnalysis
 
 """
