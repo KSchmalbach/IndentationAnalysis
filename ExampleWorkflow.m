@@ -35,14 +35,15 @@ for FileNumber=1:nfiles
     DYNcurrentfile=dlmread(DYNcurrentname,'\t',3,0);
     %Index of storage modulus in my file
     ModLoc=size(DYNcurrentfile,2)-10;
-    RawHardness{FileNumber}=DYNcurrentfile(:,ModLoc+2); 
+    RawHardness{FileNumber}=DYNcurrentfile(:,ModLoc+2);
     RawStorMod{FileNumber}=DYNcurrentfile(:,ModLoc);
-    RawStiff{FileNumber}=DYNcurrentfile(:,ModLoc+2+3); 
+    RawStiff{FileNumber}=DYNcurrentfile(:,ModLoc+2+3);
     RawLoad{FileNumber}=DYNcurrentfile(:,3);
     RawDisp{FileNumber}=DYNcurrentfile(:,2);
     RawTime{FileNumber}=DYNcurrentfile(:,1);
     RawFreq{FileNumber}=DYNcurrentfile(:,ModLoc-5);
     RawDispAmp{FileNumber}=DYNcurrentfile(:,ModLoc-4);
+    RawLoadAmp{FileNumber}=DYNcurrentfile(:,ModLoc-2);
 end
 cd(Rootdir)
 %% Rezeroing
@@ -65,6 +66,7 @@ CutLoad1=CutAfter(ZeroLoad,RawTime,EndTimes(end));
 CutTime1=CutAfter(RawTime,RawTime,EndTimes(end));
 CutStorMod1=CutAfter(ZeroMod,RawTime,EndTimes(end));
 CutHardness1=CutAfter(ZeroHard,RawTime,EndTimes(end));
+CutLoadAmp1=CutAfter(RawLoadAmp,RawTime,EndTimes(end));
 
 %Snip data from before a certain displacement (default 100 nm)
 DispCut=200; %nm
@@ -73,13 +75,14 @@ CutLoad=CutBefore(CutLoad1,CutDisp1,DispCut);
 CutTime=CutBefore(CutTime1,CutDisp1,DispCut);
 CutStorMod=CutBefore(CutStorMod1,CutDisp1,DispCut);
 CutHardness=CutBefore(CutHardness1,CutDisp1,DispCut);
-clear CutDisp1 CutHardness1 CutLoad1 CutStorMod1 CutTime1
+CutLoadAmp=CutBefore(CutLoadAmp1,CutDisp1,DispCut);
+clear CutDisp1 CutHardness1 CutLoad1 CutStorMod1 CutTime1 CutLoadAmp1
 
 CSMLess=true;
 %CSM-less Correction
 if CSMLess==true
     %4th parameter (321) is expected modulus of 321 GPa for tungsten
-    [hc,CSMLessHard,Ac]=PlasErrCorr(ARAdir,CutDisp,CutLoad,321);
+    [hc,CSMLessHard,Ac]=PlasErrCorr(ARAdir,CutDisp,CutLoad,321,CutLoadAmp);
 end
 
 NixGaoCorrection=true;
@@ -92,7 +95,7 @@ if NixGaoCorrection==true
     end
 end
 
-%% Save 
+%% Save
 save('SRJData.mat')
 
 %% SRJ Analysis
